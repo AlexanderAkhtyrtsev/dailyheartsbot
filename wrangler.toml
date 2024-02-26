@@ -1,10 +1,14 @@
-type = "webpack"
 name = "dailyheartsbot"
+type = "webpack"
 main = "src/index.js"
 compatibility_date = "2024-02-24"
 
+kv_namespaces = [
+    { binding = "GEN", id = "90212bd101fe4bb28ca04c77cb745247" }
+]
+
 [triggers]
-crons = [ "1 * * * *" ]
+crons = [ "00 09 * * *" ]
 
 [env.production]
 name = "production"
