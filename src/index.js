@@ -10,18 +10,32 @@
  * Learn more at https://developers.cloudflare.com/workers/runtime-apis/scheduled-event/
  */
 
+const delay = (ms) => new Promise( resolve => {
+	setTimeout( () => resolve(), ms )
+} )
+
+const random = (a, b) => Math.floor(b - Math.random() * b + a);
+
 function getStr() {
-	return '❤️'.repeat( 256 );
+	return '❤️'.repeat( random(32, 512) );
 }
 
 export default {
 	async scheduled(controller, env, ctx) {
 		const subscribers = JSON.parse(await env.GEN.get("subscribers") || '[]')
 
-		for( const s of subscribers )
+		for( const s of subscribers ) {
 			await this.sendMessage(env.API_KEY, s.chatId, getStr());
+		}
 	},
 	async fetch(request, env, ctx) {
+		const { url } = request;
+
+		if (url.endsWith('/scheduled')) {
+			await this.scheduled(request, env, ctx);
+			return new Response('OK')
+		}
+
 		if(request.method === "POST"){
 			const payload = await request.json();
 
@@ -32,12 +46,6 @@ export default {
 
 			if('message' in payload){
 				const chatId = payload.message.chat.id;
-				// const input = String(payload.message.text);
-				// const user_firstname = String(payload.message.from.first_name);
-				// const response = user_firstname + " said " + input;
-				// await this.sendMessage(chatId, response);
-				// await this.sendMessage(env.API_KEY, chatId, "Hello, " + user_firstname );
-
 
 				const subscribers = JSON.parse(await env.GEN.get("subscribers") || '[]')
 				if ( !subscribers.some(s => +s.chatId === +chatId) ) {
@@ -47,12 +55,17 @@ export default {
 				}
 				else if ( payload.message.text === '/get' ) {
 					await this.sendMessage(env.API_KEY, chatId, "You have already got your Daily Hearts..." );
-					await this.sendMessage(env.API_KEY, chatId, "Anyway...\n" + getStr()  );
+					await delay(1000);
+					await this.sendMessage(env.API_KEY, chatId, "OK...");
+					await delay(1000);
+					await this.sendMessage(env.API_KEY, chatId,  getStr());
 				}
 			}
 		}
+
 		return new Response('OK');
 	},
+
 	async sendMessage(apiKey, chatId, text){
 		const url = `https://api.telegram.org/bot${apiKey}/sendMessage?chat_id=${chatId}&text=${text}`;
 		return await fetch(url).then(resp => resp.json());
