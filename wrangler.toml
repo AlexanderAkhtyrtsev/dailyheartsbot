@@ -1,15 +1,24 @@
 name = "dailyheartsbot"
-type = "webpack"
 main = "src/index.js"
 compatibility_date = "2024-02-24"
-
-kv_namespaces = [
-    { binding = "GEN", id = "90212bd101fe4bb28ca04c77cb745247" }
-]
 
 [triggers]
 crons = [ "00 09 * * *" ]
 
-[env.production]
-name = "production"
+[env.development]
+name = "dailyheartsbot-dev"
+workers_dev = true
+vars = { NODE_ENV = "development" }
 webpack_config = "webpack.config.js"
+kv_namespaces = [
+    { binding = "GEN", id = "90212bd101fe4bb28ca04c77cb745247" }
+]
+
+[env.production]
+name = "dailyheartsbot"
+workers_dev = false
+webpack_config = "webpack.config.js"
+vars = { NODE_ENV = "production" }
+kv_namespaces = [
+    { binding = "GEN", id = "90212bd101fe4bb28ca04c77cb745247" }
+]
