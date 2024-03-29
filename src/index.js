@@ -14,7 +14,7 @@ const delay = (ms) => new Promise( resolve => {
 	setTimeout( () => resolve(), ms )
 } )
 
-const random = (a, b) => Math.floor(b - Math.random() * b + a);
+const random = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 
 function getStr() {
 	return '❤️'.repeat( random(32, 512) );
@@ -55,7 +55,7 @@ export default {
 				}
 				else if ( payload.message.text === '/get' ) {
 					await this.sendMessage(env.API_KEY, chatId, "You have already got your Daily Hearts..." );
-					await delay(1000);
+					await delay( [2000, 3000] [ random(0,1)] );
 					await this.sendMessage(env.API_KEY, chatId, "OK...");
 					await delay(1000);
 					await this.sendMessage(env.API_KEY, chatId,  getStr());
