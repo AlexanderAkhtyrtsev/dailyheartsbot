@@ -17,7 +17,7 @@ const delay = (ms) => new Promise( resolve => {
 const random = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 
 function getStr() {
-	return '❤️'.repeat( random(32, 512) );
+	return '❤️'.repeat( random(256, 512) );
 }
 
 export default {
