@@ -22,4 +22,4 @@ webpack_config = "webpack.config.js"
 vars = { NODE_ENV = "production" }
 
 [triggers]
-crons = [ "00 09 * * *" ]
+crons = [ "00 07 * * *" ]
